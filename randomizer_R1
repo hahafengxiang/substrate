@@ -1,0 +1,27 @@
+# Set random seed to ensure reproducibility
+set.seed(123)
+
+# Initialize an empty data frame to store the recipes
+recipes <- data.frame()
+
+# Loop until 100 recipes meeting the conditions are generated
+while(nrow(recipes) < 100){
+  # Randomly generate a new recipe, ensuring the sum is 100%
+  new_recipe_raw <- sample(1:97, 2)
+  new_recipe_raw <- sort(new_recipe_raw)
+  new_recipe <- c(new_recipe_raw[1], diff(c(new_recipe_raw, 100))[-3]) # Only generate three values
+  
+  # Convert the new recipe into a data frame row
+  new_recipe_df <- as.data.frame(t(new_recipe))
+  
+  # Check if the new recipe meets the difference condition compared to existing recipes
+  if(nrow(recipes) == 0 || all(abs(t(as.matrix(recipes)) - new_recipe_df) >= 5)){
+    recipes <- rbind(recipes, new_recipe_df)
+  }
+}
+
+# Rename columns for better understanding
+colnames(recipes) <- c("A", "B", "C")
+
+# Print the generated recipes
+print(recipes)
