@@ -1,0 +1,42 @@
+# Set the random seed to ensure reproducible results
+set.seed(123)
+
+# Initialize an empty data frame to store the recipes
+recipes <- data.frame()
+
+# Loop until 100 recipes that meet the conditions are generated
+while(nrow(recipes) < 100){
+  # Randomly generate the percentage of A, ensuring it is between 51% and 90%
+  A <- sample(51:90, 1)
+  
+  # Calculate the value of B
+  B <- 100 - A
+  
+  new_recipe <- c(A, B)
+  
+  # Convert the new recipe into a data frame row
+  new_recipe_df <- as.data.frame(t(new_recipe))
+  
+  # Check if the new recipe differs by at least 5% in each component compared to all existing recipes
+  valid <- TRUE
+  if(nrow(recipes) > 0){
+    diff_matrix <- abs(t(as.matrix(recipes)) - new_recipe_df)
+    if(any(rowSums(diff_matrix < 5) == 2)){
+      valid <- FALSE
+    }
+  }
+  
+  # If valid, add it to the recipes table
+  if(valid){
+    recipes <- rbind(recipes, new_recipe_df)
+  }
+}
+
+# Rename the columns for better readability
+colnames(recipes) <- c("Peat", "Vermi")
+
+# Print the generated recipes
+print(recipes)
+
+# Save the recipes to a CSV file
+write.csv(recipes, file = "recipes_2nd.csv")
